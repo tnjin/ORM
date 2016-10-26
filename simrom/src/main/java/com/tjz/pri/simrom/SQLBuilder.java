@@ -15,15 +15,15 @@ public class SQLBuilder {
      */
     public String buildCreationSQL(Class clazz)  {
 
-        String tableName = clazz.getName();
+        String tableName = clazz.getSimpleName();
         Field[] fields = clazz.getDeclaredFields();
 
         if(fields == null || fields.length == 0){
             throw new RuntimeException("no declaredField found in "+clazz.getName());
         }
         StringBuffer sb = new StringBuffer();
-        sb.append("create table ").append(tableName)
-                .append("if not exists (");
+        sb.append("create table  if not exists ").append(tableName)
+                .append(" (");
 
         for(int i = 0;i <fields.length;i++){
             Field f = fields[i];
