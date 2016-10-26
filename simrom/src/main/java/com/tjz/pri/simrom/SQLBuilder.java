@@ -78,7 +78,9 @@ public class SQLBuilder {
         Method[] methods = clazz.getDeclaredMethods();
         for (Method m : methods) {
             String name = m.getName();
+            if (m.getParameterTypes() !=null){
 
+            }
             if (name.startsWith("get")
                     || (name.startsWith("is") && m.getReturnType().equals(Boolean.class))) {
                 name = trimPrefix(name);
@@ -86,8 +88,10 @@ public class SQLBuilder {
                     continue;
                 }
 
+
             }
         }
+        return null;
     }
 
     /**
@@ -120,7 +124,7 @@ public class SQLBuilder {
         StringBuffer sb = new StringBuffer();
         sb.append("select * from ")
                 .append(entity.getClass().getSimpleName())
-                .append(" where entityid=")
+                .append(" where _entityid=")
                 .append(entity.getEntityId());
         String sql = sb.toString();
         Logs.i(sql);
@@ -148,30 +152,40 @@ public class SQLBuilder {
      * @return
      */
     private String java2SqlType(Class clazz) {
-        String type = clazz.getName();
-        if (type.equals("Integer") || type.equals("Short") || type.equals("long")) {
-            return "int";
-        }
-        if (type.equals("String")) {
+        String type = clazz.getSimpleName();
+        if (TextUtils.isEmpty(type)){
             return "varchar";
         }
-        if (type.equals("Double")) {
-            return "double";
+        String result = null;
+        switch (type){
+            case "Integer":
+            case "int":
+            case "Short":
+            case "short":
+            case "Long":
+            case "long":
+            result = "int";
+                break;
+            case "Double":
+            case "double":
+                result = "double";
+                break;
+            case "Float":
+            case "float":
+                result = "float";
+                break;
+            case "Boolean":
+            case "bool":
+                result = "boolean";
+                break;
+            case "Byte":
+            case "byte":
+                result = "blob";
+                break;
+                default:
+                    result = "varchar";
         }
-        if (type.equals("Float")) {
-            return "float";
-        }
-        if (type.equals("Short")) {
-            return "short";
-        }
-
-        if (type.equals("Boolean")) {
-            return "boolean";
-        }
-        if (type.equals("Byte")) {
-            return "blob";
-        }
-        return "varchar";
+        return result;
     }
 
     /**
@@ -183,15 +197,22 @@ public class SQLBuilder {
         if(clazz == null){
             return false;
         }
-      return   clazz.equals(Byte.class)
-                ||clazz.equals(Short.class)
-                ||clazz.equals(Integer.class)
-                ||clazz.equals(Long.class)
-                ||clazz.equals(Character.class)
-                ||clazz.equals(Boolean.class)
-                ||clazz.equals(Float.class)
-                ||clazz.equals(Double.class);
-
+      return   clazz==Byte.class
+                ||clazz==Short.class
+                ||clazz==Integer.class
+                ||clazz==Long.class
+                ||clazz==Character.class
+                ||clazz==Boolean.class
+                ||clazz==Float.class
+                ||clazz==Double.class
+                ||clazz==int.class
+              ||clazz == byte.class
+              ||clazz == short.class
+              ||clazz == long.class
+              ||clazz == char.class
+              ||clazz == boolean.class
+              ||clazz == float.class
+              ||clazz == double.class;
     }
 
     /**
@@ -203,7 +224,7 @@ public class SQLBuilder {
         if(clazz == null){
             return false;
         }
-        return clazz.equals(String.class)||isSimpleType(clazz);
+        return clazz==String.class||isSimpleType(clazz);
     }
 
     /**
@@ -216,7 +237,7 @@ public class SQLBuilder {
         if(clazz == null){
             return false;
         }
-        return clazz.equals(BaseEntity.class)
-                ||clazz.getSuperclass().equals(BaseEntity.class);
+        return clazz==BaseEntity.class
+                ||clazz.getSuperclass()==BaseEntity.class;
     }
 }
