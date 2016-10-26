@@ -9,7 +9,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 /**
- * Created by Lenovo on 2016/10/25.
+ * Created by tjz on 2016/10/25.
  */
 @RunWith(AndroidJUnit4.class)
 public class DataProcessorTest  extends TestCase{
